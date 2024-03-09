@@ -14,8 +14,14 @@ def home():
 
 @app.route("/mapping")
 def mapping():
+    if request.headers['MITM-HOST']:
+        client = request.headers['MITM-HOST']
+        print(f"MITM: {client}")
+    else:
+        client = request.remote_addr
+        print(f"NORMAL: {client}")
+
     con = sqlite3.connect('maps.db')
-    client = request.remote_addr
     data = pd.read_sql(f"select * from maps where client_id='{client}'",con)
 
     points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
