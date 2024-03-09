@@ -1,0 +1,25 @@
+:root {
+    --primary: #014ca6!important;
+    --primary-hover: #3e6ad3!important;
+    --primary-focus: rgba(124, 179, 66, 0.125)!important;
+    --primary-inverse: #FFF!important;
+}
+
+
+.host:hover {
+    cursor: pointer;
+    color: var(--primary-hover);
+}
+
+.icon {
+    width: 4em;
+}
+
+.small-button {
+    width: 15%;
+}
+
+.title a {
+    text-decoration: none!important;
+    color: inherit!important;
+}

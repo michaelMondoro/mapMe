@@ -1,0 +1,8 @@
+requests
+numpy
+pandas
+pysqlite3
+flask
+geopandas
+mitmproxy
+gunicorn
