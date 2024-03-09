@@ -37,8 +37,7 @@ def client_connected(client):
 def request(flow):
     host = flow.request.host
     if host == system_host:
-        print(f"PEERNAME: {flow.client_conn.peername}")
-        flow.request.headers["MITM-HOST"] = True 
+        flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
         
     
 def response(flow):
