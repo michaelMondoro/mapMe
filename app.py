@@ -7,6 +7,14 @@ import subprocess
 
 app = Flask(__name__)
 
+def check_mitm_header(request):
+    if request.headers['MITM-HOST']:
+        client = request.headers['MITM-HOST']
+        print(f"MITM: {client}")
+    else:
+        client = request.remote_addr
+        print(f"NORMAL: {client}")
+    return client
 
 @app.route("/")
 def home():
@@ -14,12 +22,7 @@ def home():
 
 @app.route("/mapping")
 def mapping():
-    if request.headers['MITM-HOST']:
-        client = request.headers['MITM-HOST']
-        print(f"MITM: {client}")
-    else:
-        client = request.remote_addr
-        print(f"NORMAL: {client}")
+    client = check_mitm_header(request)
 
     con = sqlite3.connect('maps.db')
     data = pd.read_sql(f"select * from maps where client_id='{client}'",con)
@@ -46,7 +49,7 @@ def mapping():
 @app.route("/clear_session", methods=["POST"])
 def clear_session():
     con = sqlite3.connect('maps.db')
-    client = request.remote_addr
+    client = check_mitm_header(request)
     cursor = con.cursor()
     print(client)
     cursor.execute(f"DELETE FROM maps WHERE client_id='{client}'")
