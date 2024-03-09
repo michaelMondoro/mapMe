@@ -35,6 +35,7 @@ def client_connected(client):
 
 def response(flow):
     host = flow.request.host
+    print(f"HOST: {host}")
     client_name = flow.client_conn.peername[0]
     con = sqlite3.connect('maps.db')
     cursor = con.cursor()
