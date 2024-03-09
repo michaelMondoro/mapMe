@@ -1,9 +1,9 @@
 import requests
-from urllib.parse import urlsplit
 import pandas as pd
 import numpy as np
 import json 
 import sqlite3
+import os
 
 
 table = """ CREATE TABLE maps (
@@ -27,15 +27,21 @@ table = """ CREATE TABLE maps (
 clients = {}
 con = sqlite3.connect('maps.db')
 cursor = con.cursor()
+system_host = os.popen('hostname -I | cut -d " " -f1 ').read().strip('\n')
 
 def client_connected(client):
     name = client.peername[0]
     if name not in clients:
         clients[name] = {}
 
+def request(flow):
+    host = flow.request.host
+    if host == system_host:
+        flow.request.headers["MITM-HOST"] = True 
+        print(f"PEERNAME: {flow.client_conn.peername}")
+    
 def response(flow):
     host = flow.request.host
-    print(f"HOST: {host}")
     client_name = flow.client_conn.peername[0]
     con = sqlite3.connect('maps.db')
     cursor = con.cursor()
