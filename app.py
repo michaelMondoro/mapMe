@@ -3,12 +3,12 @@ from flask import render_template, request
 import pandas as pd
 import sqlite3
 import geopandas
-import subprocess
+import random
 
 app = Flask(__name__)
 
 def check_mitm_header(request):
-    if request.headers['MITM-HOST']:
+    if request.headers.get('MITM-HOST'):
         client = request.headers['MITM-HOST']
         print(f"MITM: {client}")
     else:

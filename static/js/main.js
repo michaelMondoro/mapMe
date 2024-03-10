@@ -13,8 +13,6 @@ map.setZoom(3)
 L.geoJSON(geoJSON, {
     pointToLayer: function (feature, latlng) {
         function getColor() {
-            console.log(directHosts)
-            console.log(typeof(feature['properties']['hostname']))
             if (directHosts.includes(feature['properties']['hostname'])) {
                 return "#0047ec"
              } else {
