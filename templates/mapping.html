@@ -31,32 +31,22 @@
                 <b>timezone: </b><span id="timezone"></span><br>
 
                 <button onclick="document.getElementById('dialog').close()">close</button>
-            </article>
-            
+            </article> 
         </dialog>
+        
         <div style="padding-bottom: .5em;">
             <div id="map" style="height: 80vh;"></div>
         </div>
         <div style="display: flex; flex-direction: row; justify-content:space-between;">
-            <button class="small-button" onclick="">Start</button>
-            <button class="small-button" onclick="location.reload()">Stop</button>
+            <button class="small-button" onclick="start_tracking()">Start</button>
+            <button class="small-button" onclick="stop_tracking()">Stop</button>
             <button class="small-button" onclick="clear_session()">Clear Session</button>
         </div>
         
         
-        
-   
-        <!-- <div id="" style="float: clear;">
-            <b>Servers Visited</b><br>
-            <hr>
-            {% for server in servers %}
-                <span class="server" id="{{server}}" onclick="pan(this)">{{server}}</span><br>
-            {% endfor %}
-        </div> -->
-        
         <details open>
             <summary>Requests Table</summary>
-            <div id="">
+            <!-- <div id="">
                 <table class="striped" style="font-size: .8em;">
                     <thead>
                       <tr>
@@ -91,7 +81,7 @@
                         </tr>
                     </tfoot>
                   </table>
-            </div>
+            </div>  -->
         </details>
         
         <section></section>
@@ -107,10 +97,5 @@
         
     </div>
 </body>
-<script>
-    var jsonStr = '{{ graphJSON | safe}}'
-    var directHosts = {{direct_hosts | tojson}}
-    console.log(directHosts)
-</script>
 <script src="{{url_for('static', filename='js/main.js')}}"></script>
 </html>

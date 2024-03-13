@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, request
+from flask import render_template, request, jsonify
 import pandas as pd
 import sqlite3
 import geopandas
@@ -20,8 +20,8 @@ def check_mitm_header(request):
 def home():
     return render_template('index.html')
 
-@app.route("/mapping")
-def mapping():
+@app.route("/update")
+def update():
     client = check_mitm_header(request)
 
     con = sqlite3.connect('maps.db')
@@ -39,12 +39,18 @@ def mapping():
     hosts = data.sort_values('requests',ascending=False)['hostname'].tolist()
     servers = set(data.sort_values('requests',ascending=False)['ip'].tolist())
 
-    return render_template('mapping.html', graphJSON=gdf.to_json(), 
-                           hosts=hosts,
-                           direct_hosts=direct_hosts,
-                           servers=servers,
-                           columns=cols,
-                           rows=rows)
+    print(hosts)
+    return jsonify({
+        "geo":gdf.to_json(),
+        "hosts": hosts,
+        "direct_hosts": direct_hosts,
+        "servers": list(servers),
+        "columns": cols,
+        "rows": rows
+    })
+@app.route("/mapping")
+def mapping():
+    return render_template('mapping.html')
 
 @app.route("/clear_session", methods=["POST"])
 def clear_session():
