@@ -29,7 +29,7 @@ function init_map() {
     // Fix wierd styling of zoom controls
     document.querySelector('.leaflet-control-zoom-out').role = ""
     document.querySelector('.leaflet-control-zoom-in').role = ""
-    
+
     return map
 }
 
@@ -79,7 +79,6 @@ function update_page(geoJSON, directHosts, map) {
         }
     }).addTo(map)
 }
-
 
 
 function pan(element) {

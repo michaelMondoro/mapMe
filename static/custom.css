@@ -14,7 +14,9 @@
 .icon {
     width: 4em;
 }
-
+.icon-theme-toggle:hover {
+    cursor: pointer;
+}
 .small-button {
     width: 15%;
 }
@@ -22,4 +24,17 @@
 .title a {
     text-decoration: none!important;
     color: inherit!important;
+}
+
+.h1, .h2 {
+    transition: all 1s;
+    opacity: 0;
+}
+
+.h1 { animation: fadeIn 3s forwards;}
+.h2 {animation: fadeIn 3s 1s forwards;}
+
+@keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
 }
