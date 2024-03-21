@@ -20,7 +20,7 @@ def check_mitm_header(request):
 
 @app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template('index.html', client=request.remote_addr, host=app.config['HOSTNAME'], rendered=False)
 
 @app.route("/update")
 def update():
@@ -54,7 +54,7 @@ def update():
 
 # @app.route("/mapping")
 # def mapping():
-#     return render_template('mapping.html', client=request.remote_addr, host=app.config['HOSTNAME'])
+#     return render_template('mapping.html', )
 
 @app.route("/clear_session", methods=["POST"])
 def clear_session():

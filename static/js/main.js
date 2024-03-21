@@ -1,3 +1,5 @@
+import * as map_utils from './map.js'
+
 window.addEventListener("scroll", () => {
     var headings = document.querySelectorAll('.fade');
     headings.forEach( (e) => {
@@ -15,3 +17,5 @@ function toggle_theme() {
         html.dataset.theme = "dark"
     }
 }
+
+map_utils.init_map()

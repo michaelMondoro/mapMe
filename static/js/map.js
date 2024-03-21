@@ -1,5 +1,5 @@
 
-function toggle_theme() {
+export function toggle_theme() {
     html = document.getElementsByTagName('html')[0]
     if (html.dataset.theme === "dark") {
         html.dataset.theme = "light"
@@ -10,7 +10,7 @@ function toggle_theme() {
 
 
 
-function get_data() {
+export function get_data() {
     data = null
     $.ajax({
         url: '/update',
@@ -30,7 +30,7 @@ function get_data() {
     return data
 }
 
-function init_map() {
+export function init_map() {
     var map = L.map('map',{}).setView([0, 0], 2);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -44,7 +44,7 @@ function init_map() {
     return map
 }
 
-function update_page(geoJSON, directHosts, map) {
+export function update_page(geoJSON, directHosts, map) {
     var markersByHost = {}; 
 
     L.geoJSON(geoJSON, {
@@ -92,13 +92,13 @@ function update_page(geoJSON, directHosts, map) {
 }
 
 
-function pan(element) {
+export function pan(element) {
     map.panTo(markersByHost[element.id].getLatLng())
     map.setZoom(5)
     markersByHost[element.id].openPopup()
 }
 
-function clear_session() {
+export function clear_session() {
     $.ajax({
         url: '/clear_session',
         data: "",
@@ -114,13 +114,13 @@ function clear_session() {
     
 }
 
-function stop_tracking() {
+export function stop_tracking() {
     get_data()
     clearInterval(refresh)
     
 }
 
-function start_tracking() {
+export function start_tracking() {
     get_data()
     refresh = setInterval(get_data, 6000);
 }
