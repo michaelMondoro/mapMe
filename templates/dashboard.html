@@ -1,0 +1,72 @@
+
+<!-- Modal -->
+<dialog id="dialog">
+    <article style="width: 100%; display: inline-block!important">
+        <b>ip: </b><span id="ip"></span><br>
+        <b>hostname: </b><span id="hostname"></span><br>
+        <b>coordinates: </b><span id="latitude"></span>, <span id="longitude"></span><br>
+        <b>city: </b><span id="city"></span><br>
+        <b>region: </b><span id="region"></span><br>
+        <b>country: </b><span id="country"></span><br>
+        <b>org: </b><span id="org"></span><br>
+        <b>postal: </b><span id="postal"></span><br>
+        <b>requests: </b><span id="requests"></span><br>
+        <b>timezone: </b><span id="timezone"></span><br>
+
+        <button onclick="document.getElementById('dialog').close()">close</button>
+    </article> 
+</dialog>
+
+<!-- Map -->
+<div class="app" style="display:;">
+    <div style="padding-bottom: .5em;">
+        <div id="map" style="height: 75vh; box-shadow: rgb(183, 179, 179) 1px 1px 7px;"></div>
+    </div>
+    <div style="display: flex; flex-direction: row; justify-content:space-between;">
+        <button class="small-button" onclick="start_tracking()">Start</button>
+        <button class="small-button" onclick="stop_tracking()">Stop</button>
+        <button class="small-button" onclick="clear_session()">Clear Session</button>
+    </div>
+</div>
+
+<details open style="display: none;">
+    <summary>Requests Table</summary>
+    <!-- <div id="">
+        <table class="striped" style="font-size: .8em;">
+            <thead>
+                <tr>
+                <th scope="col"><strong>hostname</strong></th>
+                <td><strong>ip</strong></td>
+                <td><strong>region</strong></td>
+                <td><strong>location</strong></td>
+                <td><strong>organization</strong></td>
+                <td><strong>requests</strong></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td scope="row" class="host" onclick="pan(this)" id="{{row['hostname']}}">{{row['hostname']}}</td>
+                    <td>{{row['ip']}}</td>
+                    <td>{{row['region']}}, {{row['country']}}</td>
+                    <td>{{row['latitude'], row['longitude']}}</td>
+                    <td>{{row['org']}}</td>
+                    <td>{{row['requests']}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>{{rows| length}}</td>
+                    <td>{{rows | map(attribute='ip') | unique | list | length}}</td>
+                    <td>{{rows | map(attribute='region') | unique | list | length}}</td>
+                    <td>{{rows | map(attribute='latitude') | unique | list | length}}</td>
+                    <td>{{rows | map(attribute='org') | unique | list | length}}</td>
+                    <td>{{ rows | sum(attribute='requests') }}</td>
+                </tr>
+            </tfoot>
+            </table>
+    </div>  -->
+</details>
+
+<section></section>

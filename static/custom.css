@@ -26,13 +26,14 @@
     color: inherit!important;
 }
 
-.h1, .h2 {
-    transition: all 1s;
-    opacity: 0;
+
+.fade {
+    opacity: 0%;
 }
 
-.h1 { animation: fadeIn 3s forwards;}
-.h2 {animation: fadeIn 3s 1s forwards;}
+.fade-in-slow { 
+    animation: fadeIn 3s forwards;
+}
 
 @keyframes fadeIn {
     0% {opacity: 0;}

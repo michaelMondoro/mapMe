@@ -3,9 +3,11 @@ from flask import render_template, request, jsonify
 import pandas as pd
 import sqlite3
 import geopandas
-import random
+import os 
+
 
 app = Flask(__name__)
+app.config['HOSTNAME'] = os.environ.get("MAPME_HOST")
 
 def check_mitm_header(request):
     if request.headers.get('MITM-HOST'):
@@ -39,8 +41,7 @@ def update():
     hosts = data.sort_values('requests',ascending=False)['hostname'].tolist()
     servers = set(data.sort_values('requests',ascending=False)['ip'].tolist())
 
-    print(hosts)
-    return jsonify({
+    response = jsonify({
         "geo":gdf.to_json(),
         "hosts": hosts,
         "direct_hosts": direct_hosts,
@@ -48,9 +49,12 @@ def update():
         "columns": cols,
         "rows": rows
     })
-@app.route("/mapping")
-def mapping():
-    return render_template('mapping.html')
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response 
+
+# @app.route("/mapping")
+# def mapping():
+#     return render_template('mapping.html', client=request.remote_addr, host=app.config['HOSTNAME'])
 
 @app.route("/clear_session", methods=["POST"])
 def clear_session():
