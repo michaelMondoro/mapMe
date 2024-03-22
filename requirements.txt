@@ -4,4 +4,3 @@ pandas
 flask
 geopandas
 mitmproxy
-gunicorn
