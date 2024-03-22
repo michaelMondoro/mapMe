@@ -7,7 +7,7 @@ import os
 
 
 app = Flask(__name__)
-app.config['HOSTNAME'] = os.environ.get("MAPME_HOST")
+app.config['HOSTNAME'] = os.environ.get("HOSTNAME")
 
 def check_mitm_header(request):
     if request.headers.get('MITM-HOST'):
