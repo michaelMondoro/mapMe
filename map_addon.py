@@ -28,6 +28,7 @@ clients = {}
 con = sqlite3.connect('maps.db')
 cursor = con.cursor()
 system_host = os.popen('hostname -I | cut -d " " -f1 ').read().strip('\n')
+token = os.environ.get("API_TOKEN")
 
 def client_connected(client):
     name = client.peername[0]
@@ -36,6 +37,7 @@ def client_connected(client):
 
 def request(flow):
     host = flow.request.host
+    print(host)
     if host == system_host:
         flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
         
@@ -62,7 +64,12 @@ def save(client, flow, con):
     else:
         referer = None
     
-    res = requests.get(f"https://ipinfo.io/{ip}/json?token=4bf31542292cbc")
+    res = requests.get(f"https://ipinfo.io/{ip}/json?token={token}")
+    if res.status_code != 200:
+        print("ERROR getting IP info")
+        print(res.content)
+        return
+    
     data = json.loads(res.content.decode())
     lat,long = data['loc'].split(',')
     locations = np.array([client, lat, long, data['ip'],data['region'], host,
