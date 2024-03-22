@@ -52,10 +52,6 @@ def update():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response 
 
-# @app.route("/mapping")
-# def mapping():
-#     return render_template('mapping.html', )
-
 @app.route("/clear_session", methods=["POST"])
 def clear_session():
     con = sqlite3.connect('maps.db')
