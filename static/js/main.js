@@ -9,13 +9,12 @@ window.addEventListener("scroll", () => {
     });
 })
 
-function toggle_theme() {
-    html = document.getElementsByTagName('html')[0]
+document.getElementById('theme_toggle').addEventListener("click", () => {
+    var html = document.getElementsByTagName('html')[0]
     if (html.dataset.theme === "dark") {
         html.dataset.theme = "light"
     } else {
         html.dataset.theme = "dark"
     }
-}
-
-map_utils.init_map()
+})
+map_utils.init_map('mini_map')
