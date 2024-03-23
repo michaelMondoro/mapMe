@@ -4,10 +4,13 @@ import pandas as pd
 import sqlite3
 import geopandas
 import os 
+import requests, json
 
 
 app = Flask(__name__)
 app.config['HOSTNAME'] = os.environ.get("HOSTNAME")
+host_ip = os.environ.get("HOST_IP")
+token = os.environ.get("API_TOKEN")
 
 def check_mitm_header(request):
     if request.headers.get('MITM-HOST'):
@@ -20,7 +23,15 @@ def check_mitm_header(request):
 
 @app.route("/")
 def home():
-    return render_template('index.html', client=request.remote_addr, host=app.config['HOSTNAME'], rendered=False)
+    # res = requests.get(f"https://ipinfo.io/{host_ip}/json?token={token}")
+    # if res.status_code == 200:
+    #     data = json.loads(res.content.decode())
+    #     lat,long = data['loc'].split(',')
+    #     print(data)
+    return render_template('index.html', 
+                           client=request.remote_addr, 
+                           host=app.config['HOSTNAME'], 
+                           rendered=False)
 
 @app.route("/update")
 def update():

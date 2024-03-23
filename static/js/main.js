@@ -17,4 +17,6 @@ document.getElementById('theme_toggle').addEventListener("click", () => {
         html.dataset.theme = "dark"
     }
 })
-map_utils.init_map('mini_map')
+
+const mini_map = map_utils.init_map('mini_map',[50.5, 30.5])
+L.marker([50.5, 30.5]).addTo(mini_map);

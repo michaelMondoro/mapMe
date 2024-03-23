@@ -30,8 +30,9 @@ export function get_data() {
     return data
 }
 
-export function init_map(map_id) {
-    var map = L.map(map_id,{}).setView([0, 0], 2);
+export function init_map(map_id, center_coord) {
+    console.log(center_coord)
+    var map = L.map(map_id,{}).setView(center_coord, 2);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
