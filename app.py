@@ -5,6 +5,8 @@ import sqlite3
 import geopandas
 import os 
 import requests, json
+import redis
+from src.cache import Cache
 
 
 app = Flask(__name__)
@@ -23,11 +25,13 @@ def check_mitm_header(request):
 
 @app.route("/")
 def home():
-    # res = requests.get(f"https://ipinfo.io/{host_ip}/json?token={token}")
-    # if res.status_code == 200:
-    #     data = json.loads(res.content.decode())
-    #     lat,long = data['loc'].split(',')
-    #     print(data)
+    if not cache.get(request.remote_addr):
+        print(f"cache miss: {request.remote_addr}")
+        cache.set(request.remote_addr, "present")
+    else:
+        print(f"cache hit: {request.remote_addr}")
+
+        
     return render_template('index.html', 
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
@@ -74,6 +78,8 @@ def clear_session():
     return ""
 
 if __name__ == "__main__":
-    # process = subprocess.Popen(["python3", "mitm.py", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    # proxy = subprocess.Popen(["python3", "mitm.py", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    cache = Cache()
+
     app.run(host='0.0.0.0', port='5000', debug=True)
     
