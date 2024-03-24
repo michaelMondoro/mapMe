@@ -5,9 +5,7 @@ import sqlite3
 import geopandas
 import os 
 import requests, json
-import redis
-from src.cache import Cache
-
+from src.db import *
 
 app = Flask(__name__)
 app.config['HOSTNAME'] = os.environ.get("HOSTNAME")
@@ -25,13 +23,7 @@ def check_mitm_header(request):
 
 @app.route("/")
 def home():
-    if not cache.get(request.remote_addr):
-        print(f"cache miss: {request.remote_addr}")
-        cache.set(request.remote_addr, "present")
-    else:
-        print(f"cache hit: {request.remote_addr}")
-
-        
+    
     return render_template('index.html', 
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
@@ -79,7 +71,8 @@ def clear_session():
 
 if __name__ == "__main__":
     # proxy = subprocess.Popen(["python3", "mitm.py", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    cache = Cache()
-
+    db = mongo_connect()
+    if not db:
+        print("Failed to connect to db . . . exiting . . .")
     app.run(host='0.0.0.0', port='5000', debug=True)
     
