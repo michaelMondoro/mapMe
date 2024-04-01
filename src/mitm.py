@@ -6,8 +6,6 @@ import sqlite3
 import redis
 import os
 import logging
-import pandas as pd
-import numpy as np
 from mitmproxy import ctx
 
 logger = logging.getLogger()
@@ -72,16 +70,6 @@ class Map:
         else:
             logger.info(f"User is NOT live or does not exist - will NOT update")
 
-        # con = sqlite3.connect('maps.db')
-        # cursor = con.cursor()
-        
-        # df = pd.read_sql(f"SELECT * FROM maps WHERE client_id='{client_name}' AND hostname='{host}' ", con)
-        # if (len(df) > 0):
-        #     cursor.execute(f"UPDATE maps SET requests = requests+1 WHERE client_id='{client_name}' AND hostname='{host}'")
-        #     con.commit()
-        # else:
-        #     self.save(client_name, flow, con)
-
     def save(self, flow):
         ip = flow.server_conn.peername[0]
         host = flow.request.host
@@ -106,13 +94,6 @@ class Map:
 
         self.cache.hset(f"server:{host}", mapping=data)
         logger.info(f"SAVED new host: {host}")
-        # lat,long = data['loc'].split(',')
-        # locations = np.array([client, lat, long, data['ip'],data['region'], host,
-        #                         data['city'], data['country'],
-        #                         data['org'], data['postal'], data['timezone'], 1, referer])
-        # labels = ['client_id','latitude', 'longitude', 'ip', 'region', 'hostname', 'city', 'country', 'org', 'postal', 'timezone', 'requests', 'referer']
-        # data = pd.DataFrame(data=[locations], columns=labels)
-        # data.to_sql('maps',con, if_exists='append',index=False)
 
 
     def done():
