@@ -3,6 +3,7 @@ from mitmproxy import options
 from mitmproxy.tools import dump
 import requests, json
 import sqlite3
+import redis
 import os
 import logging
 import pandas as pd
@@ -14,6 +15,7 @@ logging.basicConfig(filename='mitmproxy.log', encoding='utf-8', level=logging.IN
 class Map:
     def __init__(self):
         ctx.options.block_global = False 
+        self.cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
         self.clients = {}
         self.con = sqlite3.connect('maps.db')
@@ -44,17 +46,43 @@ class Map:
     def response(self, flow):
         host = flow.request.host
         client_name = flow.client_conn.peername[0]
-        con = sqlite3.connect('maps.db')
-        cursor = con.cursor()
-        
-        df = pd.read_sql(f"SELECT * FROM maps WHERE client_id='{client_name}' AND hostname='{host}' ", con)
-        if (len(df) > 0):
-            cursor.execute(f"UPDATE maps SET requests = requests+1 WHERE client_id='{client_name}' AND hostname='{host}'")
-            con.commit()
-        else:
-            self.save(client_name, flow, con)
 
-    def save(self, client, flow, con):
+        # Update server in cache
+        cached_host = self.cache.hgetall(f"server:{host}")
+        if cached_host:
+            logger.info(f"CACHE HIT: server [ {host} ]")
+            # cached_host['requests'] = int(cached_host['requests']) + 1
+            # self.cache.hset(f"server:{host}", mapping=cached_host)
+        else:
+            self.save(flow)
+
+        # update user in cache
+        user = self.cache.hgetall(f"user:id_{client_name}")
+        logger.info(f"Request from USER: {client_name}")
+        if user and user['live'] == 'true':
+            logger.info(f"CACHE HIT: user [ {client_name} ]")
+            logger.info(f"User is live - will update")
+            if host in user.keys():
+                user[host] = int(user[host]) + 1
+                self.cache.hset(f"user:id_{client_name}", mapping=user)
+            else:
+                logger.info(f"ADDING NEW HOST {host}")
+                user[host] = 1
+                self.cache.hset(f"user:id_{client_name}", mapping=user)
+        else:
+            logger.info(f"User is NOT live or does not exist - will NOT update")
+
+        # con = sqlite3.connect('maps.db')
+        # cursor = con.cursor()
+        
+        # df = pd.read_sql(f"SELECT * FROM maps WHERE client_id='{client_name}' AND hostname='{host}' ", con)
+        # if (len(df) > 0):
+        #     cursor.execute(f"UPDATE maps SET requests = requests+1 WHERE client_id='{client_name}' AND hostname='{host}'")
+        #     con.commit()
+        # else:
+        #     self.save(client_name, flow, con)
+
+    def save(self, flow):
         ip = flow.server_conn.peername[0]
         host = flow.request.host
         referer = flow.request.headers.get_all('referer')
@@ -70,13 +98,21 @@ class Map:
             return
         
         data = json.loads(res.content.decode())
-        lat,long = data['loc'].split(',')
-        locations = np.array([client, lat, long, data['ip'],data['region'], host,
-                                data['city'], data['country'],
-                                data['org'], data['postal'], data['timezone'], 1, referer])
-        labels = ['client_id','latitude', 'longitude', 'ip', 'region', 'hostname', 'city', 'country', 'org', 'postal', 'timezone', 'requests', 'referer']
-        data = pd.DataFrame(data=[locations], columns=labels)
-        data.to_sql('maps',con, if_exists='append',index=False)
+        if 'anycast' in data.keys(): data.pop('anycast')
+
+        logger.info(f"DATA: {data}")
+        data['hostname'] = host
+        data['referer'] = referer
+
+        self.cache.hset(f"server:{host}", mapping=data)
+        logger.info(f"SAVED new host: {host}")
+        # lat,long = data['loc'].split(',')
+        # locations = np.array([client, lat, long, data['ip'],data['region'], host,
+        #                         data['city'], data['country'],
+        #                         data['org'], data['postal'], data['timezone'], 1, referer])
+        # labels = ['client_id','latitude', 'longitude', 'ip', 'region', 'hostname', 'city', 'country', 'org', 'postal', 'timezone', 'requests', 'referer']
+        # data = pd.DataFrame(data=[locations], columns=labels)
+        # data.to_sql('maps',con, if_exists='append',index=False)
 
 
     def done():

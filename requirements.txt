@@ -4,4 +4,4 @@ pandas
 flask
 geopandas
 mitmproxy
-pymongo
+redis

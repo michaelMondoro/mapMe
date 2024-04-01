@@ -4,8 +4,7 @@ import pandas as pd
 import sqlite3
 import geopandas
 import os 
-import requests, json
-from src.db import *
+import redis
 
 app = Flask(__name__)
 app.config['HOSTNAME'] = os.environ.get("HOSTNAME")
@@ -23,7 +22,6 @@ def check_mitm_header(request):
 
 @app.route("/")
 def home():
-    
     return render_template('index.html', 
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
@@ -32,8 +30,6 @@ def home():
 @app.route("/update")
 def update():
     client = check_mitm_header(request)
-
-    con = sqlite3.connect('maps.db')
     data = pd.read_sql(f"select * from maps where client_id='{client}'",con)
 
     points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
@@ -59,20 +55,25 @@ def update():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response 
 
-@app.route("/clear_session", methods=["POST"])
-def clear_session():
-    con = sqlite3.connect('maps.db')
+@app.route("/stop_session", methods=["GET"])
+def stop_session():
     client = check_mitm_header(request)
-    cursor = con.cursor()
-    print(client)
-    cursor.execute(f"DELETE FROM maps WHERE client_id='{client}'")
-    con.commit()
-    return ""
+    user = cache.hgetall(f"user:id_{client}")
+    user['live'] = 'false'
+    cache.hset(f"user:id_{client}", mapping=user)
+    return "success"
+
+@app.route("/start_session", methods=["GET"])
+def start_session():
+    client = check_mitm_header(request)
+    cache.hset(f"user:id_{client}", mapping={'live':'true'})
+    cache.expire(f"user:id_{client}", 600)
+    return "success"
+
 
 if __name__ == "__main__":
     # proxy = subprocess.Popen(["python3", "mitm.py", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    db = mongo_connect()
-    if not db:
-        print("Failed to connect to db . . . exiting . . .")
+    cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
+    con = sqlite3.connect('maps.db')
     app.run(host='0.0.0.0', port='5000', debug=True)
     
