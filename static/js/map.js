@@ -8,10 +8,8 @@ export function toggle_theme() {
     }
 }
 
-
-
 export function get_data() {
-    data = null
+    var data = null
     $.ajax({
         url: '/update',
         data: "",
@@ -99,9 +97,9 @@ export function pan(element) {
     markersByHost[element.id].openPopup()
 }
 
-export function clear_session() {
+export function stop_tracking() {
     $.ajax({
-        url: '/clear_session',
+        url: '/stop_session',
         data: "",
         type: 'POST',
         success: function(response){
@@ -112,16 +110,30 @@ export function clear_session() {
             console.log(error);
         }
     });
-    
-}
-
-export function stop_tracking() {
     get_data()
     clearInterval(refresh)
-    
 }
 
 export function start_tracking() {
-    get_data()
-    refresh = setInterval(get_data, 6000);
+    $.ajax({
+        url: '/start_session',
+        data: "",
+        type: 'POST',
+        success: function(response){
+            console.log('success')
+            // location.reload()
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+    var refresh = setInterval(get_data, 6000);
 }
+
+
+/**
+ * Listeners
+ */
+var refresh;
+document.querySelector('.stop_btn').addEventListener('click', stop_tracking)
+document.querySelector('.start_btn').addEventListener('click', start_tracking)

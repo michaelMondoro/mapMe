@@ -33,7 +33,9 @@
         </nav>
         <hr>
         <section></section>
-        {% include 'main.html' %}
+        {% if not rendered %}
+          {% include 'main.html' %}
+        {% endif %}
         {% if rendered%}
           {% include 'dashboard.html' %}
         {% endif %}

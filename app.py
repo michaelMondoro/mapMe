@@ -25,7 +25,7 @@ def home():
     return render_template('index.html', 
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
-                           rendered=False)
+                           rendered=True)
 
 @app.route("/update")
 def update():
@@ -55,19 +55,22 @@ def update():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response 
 
-@app.route("/stop_session", methods=["GET"])
+@app.route("/stop_session", methods=["POST"])
 def stop_session():
     client = check_mitm_header(request)
     user = cache.hgetall(f"user:id_{client}")
     user['live'] = 'false'
     cache.hset(f"user:id_{client}", mapping=user)
+    print(f"Stopped session for user: [ {client} ]")
+
     return "success"
 
-@app.route("/start_session", methods=["GET"])
+@app.route("/start_session", methods=["POST"])
 def start_session():
     client = check_mitm_header(request)
     cache.hset(f"user:id_{client}", mapping={'live':'true'})
     cache.expire(f"user:id_{client}", 600)
+    print(f"Started session for user: [ {client} ]")
     return "success"
 
 
