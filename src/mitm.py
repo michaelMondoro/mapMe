@@ -4,10 +4,13 @@ from mitmproxy.tools import dump
 import requests, json
 import sqlite3
 import os
+import logging
 import pandas as pd
 import numpy as np
 from mitmproxy import ctx
 
+logger = logging.getLogger()
+logging.basicConfig(filename='mitmproxy.log', encoding='utf-8', level=logging.INFO)
 class Map:
     def __init__(self):
         ctx.options.block_global = False 
@@ -27,14 +30,13 @@ class Map:
     )
         
     def client_connected(self, client):
-        print(ctx.options.block_global)
         name = client.peername[0]
         if name not in self.clients:
             self.clients[name] = {}
 
     def request(self, flow):
         host = flow.request.host
-        print(f"HOST: {host}")
+        logger.info(f"Request TO: {host}")
         if host == self.system_host:
             flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
             
@@ -63,8 +65,8 @@ class Map:
         
         res = requests.get(f"https://ipinfo.io/{ip}/json?token={self.token}")
         if res.status_code != 200:
-            print("ERROR getting IP info")
-            print(res.content)
+            logger.error("ERROR getting IP info")
+            logger.error(res.content)
             return
         
         data = json.loads(res.content.decode())
@@ -78,7 +80,7 @@ class Map:
 
 
     def done():
-        print("DONE")
+        logger.info("DONE")
 
 class Proxy:
     def __init__(self):
