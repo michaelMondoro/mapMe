@@ -9,6 +9,14 @@ window.addEventListener("scroll", () => {
     });
 })
 
+document.querySelector('.try-it').addEventListener("click", () => {
+    document.querySelector('.start-dialog').showModal();
+})
+document.querySelector('.close-button').addEventListener("click", (e) => {
+    e.toElement.style.display = "none"
+    // document.querySelector('.start-dialog').close();
+})
+
 document.getElementById('theme_toggle').addEventListener("click", () => {
     var html = document.getElementsByTagName('html')[0]
     if (html.dataset.theme === "dark") {

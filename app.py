@@ -25,7 +25,7 @@ def home():
     return render_template('index.html', 
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
-                           rendered=True)
+                           rendered=False)
 
 @app.route("/update")
 def update():

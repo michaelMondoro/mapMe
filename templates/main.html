@@ -1,21 +1,16 @@
 
 <!-- Main Content -->
-<div class="">
-  <div class="h1">
-    <h4></h4>
-    <p>The Internet is one of the most accessible technologies of our modern day. Just open a web browser, type something in and you'll find a bunch of links and media that you can click on, interact with and browse at your leisure. </p>
-
-    <p>For example, when visiting this website your request came from <code>{{ client }}</code> to <code>{{ host }}</code></p>
-
-
+<div class="container">
+  <div class="centered">
+    <p class="desc fade fade-in-slow">Your GPS for the internet</p>
+    <button class="try-it fade fade-in-delay outline small-button" role="button" onclick="start_dialog.open()">Try It!</button>
   </div>
-  <div class="mini_map" style="width: 50%;">
+
+  <dialog class="start-dialog">
+    <button class="close-button small-button">Start</button>
+  </dialog>
+  <!-- <div class="mini_map" style="width: 50%;">
       <div id="mini_map" style="height: 15em;  box-shadow: rgb(183, 179, 179) 1px 1px 7px;"></div>
-  </div>
-
-  <div class="h2">
-    <h4>  </h4>
-    <p></p>
-  </div>
+  </div> -->
 </div>
 

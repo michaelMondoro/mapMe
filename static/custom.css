@@ -5,6 +5,20 @@
     --primary-inverse: #FFF!important;
 }
 
+dialog[open] {
+    animation: fadeIn .5s ease normal;
+}
+dialog[close] {
+    animation: fadeOut .5s ease normal;
+}
+
+
+.centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
 .host:hover {
     cursor: pointer;
@@ -20,22 +34,38 @@
 .small-button {
     width: 15%;
 }
+.small-button:hover {
+    background-color: #a9caf350;
+}
 
 .title a {
     text-decoration: none!important;
     color: inherit!important;
 }
 
+.desc {
+    transition: all;
+}
 
 .fade {
     opacity: 0%;
 }
-
 .fade-in-slow { 
-    animation: fadeIn 3s forwards;
+    animation: fadeIn 3s forwards, slideUp 3s forwards;
+}
+.fade-in-delay { 
+    animation: fadeIn 3s forwards 1s, slideUp 3s forwards 1s;
 }
 
 @keyframes fadeIn {
     0% {opacity: 0;}
     100% {opacity: 1;}
+}
+@keyframes fadeOut {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}
+@keyframes slideUp {
+    0% {translate: 0px 50px;}
+    100% {translate: 0px 0px;}
 }
