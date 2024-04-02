@@ -2,59 +2,74 @@ import requests
 import pandas as pd
 import numpy as np
 import json 
-import sqlite3
 import os
+import redis
+import logging 
 
-
-table = """ CREATE TABLE maps (
-            client_id VARCHAR(255) NOT NULL,
-            city VARCHAR(255) NOT NULL,
-            country VARCHAR(255) NOT NULL,
-            hostname VARCHAR(255) NOT NULL,
-            ip VARCHAR(255) NOT NULL,
-            latitude FLOAT NOT NULL,
-            longitude FLOAT NOT NULL,
-            org VARCHAR(255) NOT NULL,
-            postal INT NOT NULL,
-            region VARCHAR(255) NOT NULL,
-            requests INT NOT NULL,
-            timezone VARCHAR(255) NOT NULL,
-            referer VARCHAR(255)
-        ); """
-
+logger = logging.getLogger()
+logging.basicConfig(filename='mitmproxy.log', encoding='utf-8', level=logging.INFO)
 
 
 clients = {}
-con = sqlite3.connect('maps.db')
-cursor = con.cursor()
 system_host = os.popen('hostname -I | cut -d " " -f1 ').read().strip('\n')
 token = os.environ.get("API_TOKEN")
+cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
-def client_connected(client):
+
+def load(self, loader):
+    loader.add_option(
+        name="block_global",
+        typespec=bool,
+        default=False,
+        help="Block global",
+)
+    
+def client_connected(self, client):
     name = client.peername[0]
     if name not in clients:
         clients[name] = {}
 
-def request(flow):
+def request(self, flow):
     host = flow.request.host
+    logger.info(f"Request TO: {host}")
     if host == system_host:
         flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
         
     
-def response(flow):
+def response(self, flow):
     host = flow.request.host
     client_name = flow.client_conn.peername[0]
-    con = sqlite3.connect('maps.db')
-    cursor = con.cursor()
-    
-    df = pd.read_sql(f"SELECT * FROM maps WHERE client_id='{client_name}' AND hostname='{host}' ", con)
-    if (len(df) > 0):
-        cursor.execute(f"UPDATE maps SET requests = requests+1 WHERE client_id='{client_name}' AND hostname='{host}'")
-        con.commit()
-    else:
-        save(client_name, flow, con)
 
-def save(client, flow, con):
+    # update user in cache
+    user = cache.hgetall(f"user:id_{client_name}")
+    logger.info(f"Request from USER: {client_name}")
+    if user and user['live'] == 'true':
+        logger.info(f"CACHE HIT: user [ {client_name} ]")
+        logger.info(f"User is live - will update")
+        if host in user.keys():
+            user[host] = int(user[host]) + 1
+            cache.hset(f"user:id_{client_name}", mapping=user)
+        else:
+            logger.info(f"ADDING NEW HOST {host}")
+            user[host] = 1
+            cache.hset(f"user:id_{client_name}", mapping=user)
+    else:
+        logger.info(f"User is NOT live or does not exist - will NOT update")
+        flow.kill()
+        return
+    
+    # Update server in cache
+    cached_host = cache.hgetall(f"server:{host}")
+    if cached_host:
+        logger.info(f"CACHE HIT: server [ {host} ]")
+        # cached_host['requests'] = int(cached_host['requests']) + 1
+        # cache.hset(f"server:{host}", mapping=cached_host)
+    else:
+        save(flow)
+
+    
+
+def save(self, flow):
     ip = flow.server_conn.peername[0]
     host = flow.request.host
     referer = flow.request.headers.get_all('referer')
@@ -65,19 +80,22 @@ def save(client, flow, con):
     
     res = requests.get(f"https://ipinfo.io/{ip}/json?token={token}")
     if res.status_code != 200:
-        print("ERROR getting IP info")
-        print(res.content)
+        logger.error("ERROR getting IP info")
+        logger.error(res.content)
         return
     
     data = json.loads(res.content.decode())
-    lat,long = data['loc'].split(',')
-    locations = np.array([client, lat, long, data['ip'],data['region'], host,
-                            data['city'], data['country'],
-                            data['org'], data['postal'], data['timezone'], 1, referer])
-    labels = ['client_id','latitude', 'longitude', 'ip', 'region', 'hostname', 'city', 'country', 'org', 'postal', 'timezone', 'requests', 'referer']
-    data = pd.DataFrame(data=[locations], columns=labels)
-    data.to_sql('maps',con, if_exists='append',index=False)
+    if 'anycast' in data.keys(): data.pop('anycast')
+
+    data['hostname'] = host
+    if referer: 
+        data['referer'] = referer 
+    else: 
+        data['referer'] = ""
+    logger.info(f"DATA: {data}")
+    cache.hset(f"server:{host}", mapping=data)
+    logger.info(f"SAVED new host: {host}")
 
 
 def done():
-    print("DONE")
+    logger.info("DONE")
