@@ -128,6 +128,7 @@ export function start_tracking() {
         }
     });
     var refresh = setInterval(get_data, 6000);
+    get_data()
 }
 
 

@@ -45,15 +45,6 @@ class Map:
         host = flow.request.host
         client_name = flow.client_conn.peername[0]
 
-        # Update server in cache
-        cached_host = self.cache.hgetall(f"server:{host}")
-        if cached_host:
-            logger.info(f"CACHE HIT: server [ {host} ]")
-            # cached_host['requests'] = int(cached_host['requests']) + 1
-            # self.cache.hset(f"server:{host}", mapping=cached_host)
-        else:
-            self.save(flow)
-
         # update user in cache
         user = self.cache.hgetall(f"user:id_{client_name}")
         logger.info(f"Request from USER: {client_name}")
@@ -69,6 +60,19 @@ class Map:
                 self.cache.hset(f"user:id_{client_name}", mapping=user)
         else:
             logger.info(f"User is NOT live or does not exist - will NOT update")
+            flow.kill()
+            return
+        
+        # Update server in cache
+        cached_host = self.cache.hgetall(f"server:{host}")
+        if cached_host:
+            logger.info(f"CACHE HIT: server [ {host} ]")
+            # cached_host['requests'] = int(cached_host['requests']) + 1
+            # self.cache.hset(f"server:{host}", mapping=cached_host)
+        else:
+            self.save(flow)
+
+        
 
     def save(self, flow):
         ip = flow.server_conn.peername[0]
@@ -88,10 +92,12 @@ class Map:
         data = json.loads(res.content.decode())
         if 'anycast' in data.keys(): data.pop('anycast')
 
-        logger.info(f"DATA: {data}")
         data['hostname'] = host
-        data['referer'] = referer
-
+        if referer: 
+            data['referer'] = referer 
+        else: 
+            data['referer'] = ""
+        logger.info(f"DATA: {data}")
         self.cache.hset(f"server:{host}", mapping=data)
         logger.info(f"SAVED new host: {host}")
 

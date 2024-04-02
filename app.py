@@ -30,6 +30,8 @@ def home():
 @app.route("/update")
 def update():
     client = check_mitm_header(request)
+    user_data = cache.hgetall(f"user:id_{client}")
+    print(user_data)
     data = pd.read_sql(f"select * from maps where client_id='{client}'",con)
 
     points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
