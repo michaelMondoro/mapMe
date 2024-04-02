@@ -3,11 +3,23 @@
 <div class="container">
   <div class="centered">
     <p class="desc fade fade-in-slow">Your GPS for the internet</p>
-    <button class="try-it fade fade-in-delay outline small-button" role="button" onclick="start_dialog.open()">Try It!</button>
+    <button class="try-it fade fade-in-delay outline small-button" role="button" onclick="document.querySelector('.start-dialog').showModal();">Try It!</button>
   </div>
 
   <dialog class="start-dialog">
-    <button class="close-button small-button">Start</button>
+    <article class="start-article">
+      <header></header>
+      <p>A proxy server is used to process and forward your HTTP requests to their respective destinations. In order to set up your browser to use map.me - complete the following steps:</p>
+      <p>
+        <ol>
+          <li>Navigate to the following <a href="http://mitm.it/" target="_blank">link</a> and find your browser or operating system</li>
+          <li>Select <span role="button" class="ca-cert-btn">🔏 Get mitmproxy-ca-cert.pem</span> and download the certificate</li>
+          <li>Select <span role="button" class="instruction-btn">📖 Show Instructions</span> and follow the instructions to install the certificate</li>
+        </ol>
+      </p>
+      <footer><button class="close-button">Start</button></footer>
+    </article>
+    
   </dialog>
   <!-- <div class="mini_map" style="width: 50%;">
       <div id="mini_map" style="height: 15em;  box-shadow: rgb(183, 179, 179) 1px 1px 7px;"></div>

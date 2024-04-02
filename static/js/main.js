@@ -10,7 +10,10 @@ window.addEventListener("scroll", () => {
 })
 
 document.querySelector('.try-it').addEventListener("click", () => {
+    map_utils.start_tracking()
     document.querySelector('.start-dialog').showModal();
+    
+    
 })
 document.querySelector('.close-button').addEventListener("click", (e) => {
     e.toElement.style.display = "none"
