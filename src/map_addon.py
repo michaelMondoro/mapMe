@@ -15,19 +15,19 @@ system_host = os.popen('hostname -I | cut -d " " -f1 ').read().strip('\n')
 token = os.environ.get("API_TOKEN")
 cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
     
-def client_connected(self, client):
+def client_connected(client):
     name = client.peername[0]
     if name not in clients:
         clients[name] = {}
 
-def request(self, flow):
+def request(flow):
     host = flow.request.host
     logger.info(f"Request TO: {host}")
     if host == system_host:
         flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
         
     
-def response(self, flow):
+def response(flow):
     host = flow.request.host
     client_name = flow.client_conn.peername[0]
 
@@ -60,7 +60,7 @@ def response(self, flow):
 
     
 
-def save(self, flow):
+def save(flow):
     ip = flow.server_conn.peername[0]
     host = flow.request.host
     referer = flow.request.headers.get_all('referer')
