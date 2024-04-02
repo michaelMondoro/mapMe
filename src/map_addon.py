@@ -14,15 +14,6 @@ clients = {}
 system_host = os.popen('hostname -I | cut -d " " -f1 ').read().strip('\n')
 token = os.environ.get("API_TOKEN")
 cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
-
-
-def load(self, loader):
-    loader.add_option(
-        name="block_global",
-        typespec=bool,
-        default=False,
-        help="Block global",
-)
     
 def client_connected(self, client):
     name = client.peername[0]
