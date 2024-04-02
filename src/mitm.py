@@ -9,7 +9,8 @@ import logging
 from mitmproxy import ctx
 
 logger = logging.getLogger()
-logging.basicConfig(filename='mitmproxy.log', encoding='utf-8', level=logging.INFO)
+logging.basicConfig(filename='mitmproxy.log', encoding='utf-8', level=logging.ERROR)
+
 class Map:
     def __init__(self):
         ctx.options.block_global = False 
