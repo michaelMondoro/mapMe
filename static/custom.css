@@ -33,9 +33,32 @@ dialog[close] {
 }
 
 .start-article {
-    width: 75%!important;
+    min-width: 50%!important;
     max-width: 75%!important;
+    text-align: center!important;
 }
+.article-contents{
+    text-align: left;
+}
+.page1 {
+
+}
+.page2 {
+    display: none;
+}
+.page3 {
+    display: none;
+    text-align: center;
+}
+
+.firefox-form  {
+    font-size:.8em;
+}
+.firefox-form input[type="text"] {
+    height: 2em!important;
+    font-size: 1em;
+}
+
 
 .ca-cert-btn {
     background-color: #28a745!important;
@@ -49,8 +72,19 @@ dialog[close] {
 }
 
 .small-button {
-    width: 15%;
+    max-width: 25%;
 }
+.mini-button {
+    padding: 5px 20px 5px 20px!important;
+    background-color: #bcb9b932!important;
+    border: none!important;
+    color: black!important;
+}
+.mini-button:hover {
+    cursor:default;
+    background-color: #bcb9b95c!important;
+}
+
 .small-button:hover {
     background-color: #a9caf350;
 }
@@ -58,10 +92,6 @@ dialog[close] {
 .title a {
     text-decoration: none!important;
     color: inherit!important;
-}
-
-.desc {
-    transition: all;
 }
 
 .fade {

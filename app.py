@@ -10,6 +10,15 @@ app = Flask(__name__)
 app.config['HOSTNAME'] = os.environ.get("HOSTNAME")
 host_ip = os.environ.get("HOST_IP")
 token = os.environ.get("API_TOKEN")
+if not host_ip: 
+    print("Set 'HOST_IP' env variable") 
+    exit(1)
+if not app.config['HOSTNAME']:
+    print("Set 'HOSTNAME' env variable") 
+    exit(1)
+if not token:
+    print("Set 'API_TOKEN' env variable") 
+    exit(1)
 
 def check_mitm_header(request):
     if request.headers.get('MITM-HOST'):
@@ -26,6 +35,28 @@ def home():
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
                            rendered=False)
+
+@app.route("/error")
+def error():
+    return render_template('error.html',host=host_ip)
+
+@app.route("/poll", methods=["POST"])
+def poll_user():
+    if request.remote_addr != host_ip:
+        print(f"user is not connected to the proxy")
+        print(f"IP {request.remote_addr} != {host_ip}")
+        return "false"
+
+    client = check_mitm_header(request)
+    user_data = cache.hgetall(f"user:id_{client}")
+    if user_data:
+        print(f"User [{client}] exists - setting connected status")
+        user_data['connected'] = 'true'
+        cache.hset(f"user:id_{client}", mapping=user_data)
+        return "true"
+    else:
+        print(f"User [{client}] does not exist")
+        return "false"
 
 @app.route("/update")
 def update():
@@ -61,24 +92,31 @@ def update():
 def stop_session():
     client = check_mitm_header(request)
     user = cache.hgetall(f"user:id_{client}")
+    if not user:
+        print(f"No such user [{client}]")
+        return "false"
+    
     user['live'] = 'false'
     cache.hset(f"user:id_{client}", mapping=user)
     print(f"Stopped session for user: [ {client} ]")
-
     return "success"
 
 @app.route("/start_session", methods=["POST"])
 def start_session():
     client = check_mitm_header(request)
-    cache.hset(f"user:id_{client}", mapping={'live':'true'})
-    cache.expire(f"user:id_{client}", 600)
-    print(f"Started session for user: [ {client} ]")
+    user = cache.hgetall(f"user:id_{client}")
+    if not user:
+        cache.hset(f"user:id_{client}", mapping={'live':'false','connected':'false'})
+        cache.expire(f"user:id_{client}", 600)
+        print(f"Created entry for user: [ {client} ]")
+    else:
+        print(f"User [{client}] already exists")
     return "success"
 
 
 if __name__ == "__main__":
     # proxy = subprocess.Popen(["python3", "mitm.py", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
-    con = sqlite3.connect('maps.db')
+
     app.run(host='0.0.0.0', port='5000', debug=True)
     

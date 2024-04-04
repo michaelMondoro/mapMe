@@ -104,14 +104,14 @@ export function stop_tracking() {
         type: 'POST',
         success: function(response){
             console.log('success')
-            location.reload()
+            // location.reload()
         },
         error: function(error){
             console.log(error);
         }
     });
-    get_data()
-    clearInterval(refresh)
+    // get_data()
+    // clearInterval(refresh)
 }
 
 export function start_tracking() {
@@ -127,14 +127,11 @@ export function start_tracking() {
             console.log(error);
         }
     });
-    var refresh = setInterval(get_data, 6000);
-    get_data()
+    // var refresh = setInterval(get_data, 6000);
+    // get_data()
 }
 
 
 /**
  * Listeners
  */
-var refresh;
-document.querySelector('.stop_btn').addEventListener('click', stop_tracking)
-document.querySelector('.start_btn').addEventListener('click', start_tracking)

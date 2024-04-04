@@ -8,16 +8,57 @@
 
   <dialog class="start-dialog">
     <article class="start-article">
-      <header></header>
-      <p>A proxy server is used to process and forward your HTTP requests to their respective destinations. In order to set up your browser to use map.me - complete the following steps:</p>
-      <p>
-        <ol>
-          <li>Navigate to the following <a href="http://mitm.it/" target="_blank">link</a> and find your browser or operating system</li>
-          <li>Select <span role="button" class="ca-cert-btn">🔏 Get mitmproxy-ca-cert.pem</span> and download the certificate</li>
-          <li>Select <span role="button" class="instruction-btn">📖 Show Instructions</span> and follow the instructions to install the certificate</li>
-        </ol>
-      </p>
-      <footer><button class="close-button">Start</button></footer>
+      <div class="article-contents">
+        <div class="page1">
+          <p>A proxy server is used to process and forward your HTTP requests to their respective destinations. In order to set up your browser to use map.me - complete the following steps:</p>
+          <h5>Configure Proxy</h5>
+            <ol>
+              <li>Open this page up in Firefox web browser</li>
+              <li>In Firefox settings, type <i>proxy</i> into the search bar and click <span role="button" class="mini-button">Settings...</span></li>
+              <li>Fill in the options like so: </li>
+              <form class="firefox-form">
+                <hr>
+                <label><input type="checkbox" checked="true"> Manual proxy configuration</label>
+                <div style="display: flex; justify-content: ;">
+                  <label style="white-space: nowrap;">HTTP Proxy <input type="text" value="{{host}}" style="width: 60%;"></label>
+                  <label style="white-space: nowrap;">Port <input type="text" value="8080" style="width: 30%;"></label>
+                </div>
+                <label><input type="checkbox" checked="true"> Also use this proxy for HTTPS</label>
+                <hr>
+              </form>
+              <li>Once complete, click <code>next</code> to continue</li>
+            </ol>
+          </div>
+          <div class="page2">
+            <h5>Install Proxy Certificate</h5>
+            <ol>
+              <li>Navigate to the following <a href="http://mitm.it/" target="_blank">link</a> and find your browser or operating system</li>
+              <li>Select <span role="button" class="ca-cert-btn">🔏 Get mitmproxy-ca-cert.pem</span> and download the certificate</li>
+              <li>Select <span role="button" class="instruction-btn">📖 Show Instructions</span> and follow the instructions to install the certificate</li>
+              <li>Once completed: click <code>connect</code> below to validate your connection</li>
+            </ol>
+            <div>
+              <strong>Proxy Status: <kbd class="status">disconnected</kbd></strong>
+            </div>
+          </div>
+          <div class="page3">
+            <span class="loading">Monitoring your data . . .
+              <p>Select <code>stop</code> to end your session</p>
+            </span>
+            
+          </div>
+      </div>
+      <footer>
+        <div style="display: flex; justify-content: space-between; flex-flow: row-reverse;">
+          <button class="connect-button small-button outline" style="display: none">Connect</button>
+          <button class="start-button small-button" style="display: none">Start!</button>
+          <button class="stop-button small-button outline" style="display: none">Stop</button>
+          <button class="results-button small-button outline" style="display: none">View Results</button>
+          <button class="next-button small-button outline">Next</button>
+          <button class="prev-button small-button outline" style="display: none">Prev</button>
+          <button class="close-button small-button outline" style="display: ">Cancel</button>
+        </div>
+      </footer>
     </article>
     
   </dialog>
