@@ -50,8 +50,9 @@ def poll_user():
     client = check_mitm_header(request)
     user_data = cache.hgetall(f"user:id_{client}")
     if user_data:
-        print(f"User [{client}] exists - setting connected status")
+        print(f"User [{client}] exists - setting status")
         user_data['connected'] = 'true'
+        user_data['live'] = 'true'
         cache.hset(f"user:id_{client}", mapping=user_data)
         return "true"
     else:

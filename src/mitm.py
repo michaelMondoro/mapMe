@@ -57,9 +57,9 @@ class Map:
             else:
                 logger.info(f"User is not live - checking for configuration ping")
                 if flow.request.path == "/poll" and proxy_ip in flow.request.host:
-                    logger.info(f"User ping detected - setting user 'live'")
-                    user['live'] = 'true'
-                    self.cache.hset(f"user:id_{client_name}", mapping=user)
+                    logger.info(f"Initial ping detected - forwarding request")
+                elif flow.request.host == "mitm.it":
+                    logger.info(f"mitm.it ping detected - forwarding request")
                 else:
                     if proxy_ip not in flow.request.host:
                         logger.error(f"User [{client_name}] session not live - dropping request")
