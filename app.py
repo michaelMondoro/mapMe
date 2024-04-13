@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template, request, jsonify
 import pandas as pd
-import sqlite3
+import numpy as np
 import geopandas
 import os 
 import redis
@@ -66,7 +66,9 @@ def update():
     user_data = cache.hgetall(f"user:id_{client}")
     print(user_data)
     data = get_results(user_data)
-    points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
+    locations = np.array(data['locations'])
+
+    points = geopandas.points_from_xy(x=locations[:,0], y=locations[:,0])
     gdf = geopandas.GeoDataFrame(data, geometry=points)
     
     cols = data.columns.tolist()
@@ -102,7 +104,7 @@ def stop_session():
     print(f"Stopped session for user: [ {client} ]")
 
     data = get_results(user)
-    print(data)
+    
     points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
     gdf = geopandas.GeoDataFrame(data, geometry=points)
     
@@ -142,9 +144,17 @@ def start_session():
 
 
 def get_results(user_data:dict) -> dict:
+    locations = []
+    servers = []
     for key in user_data:
         if key != "live" and key != "connected":
+            server = cache.hgetall(f"server:{key}")
+            locations.append(server['loc'].split(','))
             request_count = user_data[key]
+            server['count'] = request_count
+            servers.append(server)
+    
+    return {"servers":servers, "locations":locations}
 
 
 
