@@ -65,8 +65,7 @@ def update():
     client = check_mitm_header(request)
     user_data = cache.hgetall(f"user:id_{client}")
     print(user_data)
-    data = pd.read_sql(f"select * from maps where client_id='{client}'",con)
-
+    data = get_results(user_data)
     points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
     gdf = geopandas.GeoDataFrame(data, geometry=points)
     
@@ -114,6 +113,14 @@ def start_session():
     else:
         print(f"User [{client}] already exists")
     return "success"
+
+
+def get_results(user_data:dict) -> dict:
+    for key in user_data:
+        if key != "live" and key != "connected":
+            request_count = user_data[key]
+
+            
 
 
 if __name__ == "__main__":
