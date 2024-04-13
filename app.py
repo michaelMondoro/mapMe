@@ -60,37 +60,6 @@ def poll_user():
         print(f"User [{client}] does not exist")
         return "false"
 
-@app.route("/update")
-def update():
-    client = check_mitm_header(request)
-    user_data = cache.hgetall(f"user:id_{client}")
-    print(user_data)
-    data = get_results(user_data)
-    locations = np.array(data['locations'])
-
-    points = geopandas.points_from_xy(x=locations[:,0], y=locations[:,0])
-    gdf = geopandas.GeoDataFrame(data, geometry=points)
-    
-    cols = data.columns.tolist()
-    rows = []
-    for i in range(len(data)):
-        rows.append(data.loc[i,:].to_dict())
-    
-    direct_hosts = data.loc[(data['referer'].isna())]['hostname'].values.tolist()
-    hosts = data.sort_values('requests',ascending=False)['hostname'].tolist()
-    servers = set(data.sort_values('requests',ascending=False)['ip'].tolist())
-
-    response = jsonify({
-        "geo":gdf.to_json(),
-        "hosts": hosts,
-        "direct_hosts": direct_hosts,
-        "servers": list(servers),
-        "columns": cols,
-        "rows": rows
-    })
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response 
-
 @app.route("/stop_session", methods=["GET"])
 def stop_session():
     client = check_mitm_header(request)
@@ -104,7 +73,9 @@ def stop_session():
     print(f"Stopped session for user: [ {client} ]")
 
     data = get_results(user)
-    
+    locations = np.array(data['locations'])
+
+    points = geopandas.points_from_xy(x=locations[:,0], y=locations[:,0])
     points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
     gdf = geopandas.GeoDataFrame(data, geometry=points)
     
