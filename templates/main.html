@@ -18,12 +18,12 @@
               <li>Fill in the options like so: </li>
               <form class="firefox-form">
                 <hr>
-                <label><input type="checkbox" checked="true"> Manual proxy configuration</label>
+                <label><input type="checkbox" checked="true" onclick="return false"> Manual proxy configuration</label>
                 <div style="display: flex; justify-content: ;">
-                  <label style="white-space: nowrap;">HTTP Proxy <input type="text" value="{{host}}" style="width: 60%;"></label>
-                  <label style="white-space: nowrap;">Port <input type="text" value="8080" style="width: 30%;"></label>
+                  <label style="white-space: nowrap;">HTTP Proxy <input type="text" value="{{host}}" style="width: 60%;" readonly></label>
+                  <label style="white-space: nowrap;">Port <input type="text" value="8080" style="width: 30%;" readonly></label>
                 </div>
-                <label><input type="checkbox" checked="true"> Also use this proxy for HTTPS</label>
+                <label><input type="checkbox" checked="true" onclick="return false"> Also use this proxy for HTTPS</label>
                 <hr>
               </form>
               <li>Once complete, click <code>next</code> to continue</li>

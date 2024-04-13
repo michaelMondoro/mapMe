@@ -13,7 +13,8 @@ window.addEventListener("scroll", () => {
     });
 })
 
-document.querySelector('.try-it').addEventListener("click", () => {
+document.querySelector('.try-it').addEventListener("click", (e) => {
+    // document.querySelector('.start-dialog').close();
     document.querySelector('.start-dialog').showModal();
     map_utils.start_tracking()
 })
@@ -58,6 +59,7 @@ document.querySelector('.prev-button').addEventListener("click", () => {
     document.querySelector('.start-button').style.display = "none";
     document.querySelector('.connect-button').style.display = "none";
     document.querySelector('.next-button').style.display = "block";
+    document.querySelector('.close-button').style.display = "block";
 })
 
 document.querySelector('.results-button').addEventListener("click", () => {
