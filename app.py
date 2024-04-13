@@ -89,7 +89,7 @@ def update():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response 
 
-@app.route("/stop_session", methods=["POST"])
+@app.route("/stop_session", methods=["GET"])
 def stop_session():
     client = check_mitm_header(request)
     user = cache.hgetall(f"user:id_{client}")
