@@ -100,7 +100,33 @@ def stop_session():
     user['live'] = 'false'
     cache.hset(f"user:id_{client}", mapping=user)
     print(f"Stopped session for user: [ {client} ]")
-    return "success"
+
+    data = get_results(user)
+    print(data)
+    points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
+    gdf = geopandas.GeoDataFrame(data, geometry=points)
+    
+    cols = data.columns.tolist()
+    rows = []
+    for i in range(len(data)):
+        rows.append(data.loc[i,:].to_dict())
+    
+    direct_hosts = data.loc[(data['referer'].isna())]['hostname'].values.tolist()
+    hosts = data.sort_values('requests',ascending=False)['hostname'].tolist()
+    servers = set(data.sort_values('requests',ascending=False)['ip'].tolist())
+
+    response = jsonify({
+        "geo":gdf.to_json(),
+        "hosts": hosts,
+        "direct_hosts": direct_hosts,
+        "servers": list(servers),
+        "columns": cols,
+        "rows": rows
+    })
+    return render_template('index.html', 
+                           client=request.remote_addr, 
+                           host=app.config['HOSTNAME'], 
+                           rendered=True)
 
 @app.route("/start_session", methods=["POST"])
 def start_session():
@@ -120,7 +146,7 @@ def get_results(user_data:dict) -> dict:
         if key != "live" and key != "connected":
             request_count = user_data[key]
 
-            
+
 
 
 if __name__ == "__main__":
