@@ -82,7 +82,7 @@ class Map:
         host = flow.request.host
         client_name = flow.client_conn.peername[0]
 
-    def save(self, flow) -> None:
+    def save(self, flow: http.HTTPFlow) -> None:
         ip = flow.server_conn.peername[0]
         host = flow.request.host
         referer = flow.request.headers.get_all('referer')
@@ -110,7 +110,7 @@ class Map:
         logger.info(f"SAVED new host: {host}")
 
 
-    def done():
+    def done() -> None:
         logger.info("DONE")
 
 class Proxy:

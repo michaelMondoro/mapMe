@@ -49,6 +49,7 @@ def poll_user():
 
     client = check_mitm_header(request)
     user_data = cache.hgetall(f"user:id_{client}")
+    # TODO: need to add some way of verifying cert - not just traffic coming from proxy
     if user_data:
         print(f"User [{client}] exists - setting status")
         user_data['connected'] = 'true'
