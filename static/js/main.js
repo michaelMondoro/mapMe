@@ -14,7 +14,7 @@ window.addEventListener("scroll", () => {
 })
 
 document.querySelector('.try-it').addEventListener("click", (e) => {
-    // document.querySelector('.start-dialog').close();
+    document.querySelector('.start-dialog').close();
     document.querySelector('.start-dialog').showModal();
     map_utils.start_tracking()
 })
