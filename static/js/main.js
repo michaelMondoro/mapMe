@@ -36,7 +36,7 @@ document.querySelector('.stop-button').addEventListener("click", () => {
     document.querySelector('.results-button').style.display = "block";
     // document.querySelector('.loading').ariaBusy = "true";
     document.querySelector('.loading').innerText = "Generating your session report . . ."
-    map_utils.stop_tracking()
+    // map_utils.stop_tracking()
 })
 
 document.querySelector('.next-button').addEventListener("click", () => {
