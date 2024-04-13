@@ -115,17 +115,17 @@ def start_session():
 
 
 def get_results(user_data:dict) -> dict:
-    locations = []
+    columns = ['hostname','ip','city','region','country','location','org','postal','timezone','referer','count']
     servers = []
     for key in user_data:
         if key != "live" and key != "connected":
             server = cache.hgetall(f"server:{key}")
-            locations.append(server['loc'].split(','))
             request_count = user_data[key]
             server['count'] = request_count
-            servers.append(server)
+            servers.append([server['hostname'], server['ip'], server['city'], server['region'],server['country'],
+                            server['loc'],server['org'], server['postal'],server['timezone'],server['referer'],request_count])
     
-    return {"servers":servers, "locations":locations}
+    return pd.DataFrame(servers, columns=columns)
 
 
 
