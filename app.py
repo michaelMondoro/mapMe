@@ -73,6 +73,7 @@ def stop_session():
     print(f"Stopped session for user: [ {client} ]")
 
     data = get_results(user)
+    print(data)
     locations = np.array(data['locations'])
 
     points = geopandas.points_from_xy(x=locations[:,0], y=locations[:,0])
