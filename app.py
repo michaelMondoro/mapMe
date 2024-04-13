@@ -77,7 +77,6 @@ def stop_session():
     locations = np.array(data['locations'])
 
     points = geopandas.points_from_xy(x=locations[:,0], y=locations[:,0])
-    points = geopandas.points_from_xy(x=data.longitude, y=data.latitude)
     gdf = geopandas.GeoDataFrame(data, geometry=points)
     
     cols = data.columns.tolist()
