@@ -33,56 +33,13 @@ class Map:
         name = client.peername[0]
 
     def request(self, flow: http.HTTPFlow) -> None:
-        # host = flow.request.host
-        # logger.info(f"Request TO: {host}")
-        # if host == self.system_host:
-        #     flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
-        
-        # client_name = flow.client_conn.peername[0]
-
-        # # update user in cache
-        # user = self.cache.hgetall(f"user:id_{client_name}")
-        # logger.info(f"Request from USER: {client_name}")
-        # if user:
-        #     if user['live'] == 'true':
-        #         logger.info(f"CACHE HIT: user [ {client_name} ]")
-        #         logger.info(f"User is live - will update")
-        #         if host in user.keys():
-        #             user[host] = int(user[host]) + 1
-        #             self.cache.hset(f"user:id_{client_name}", mapping=user)
-        #         else:
-        #             logger.info(f"ADDING NEW HOST {host}")
-        #             user[host] = 1
-        #             self.cache.hset(f"user:id_{client_name}", mapping=user)
-        #     else:
-        #         logger.info(f"User is not live - checking for configuration ping")
-        #         if flow.request.path == "/poll" and proxy_ip in flow.request.host:
-        #             logger.info(f"Initial ping detected - forwarding request")
-        #         elif flow.request.host == "mitm.it":
-        #             logger.info(f"mitm.it ping detected - forwarding request")
-        #         else:
-        #             if proxy_ip not in flow.request.host:
-        #                 logger.error(f"User [{client_name}] session not live - dropping request")
-        #                 flow.kill()
-        #                 return
-        # else:
-        #     if proxy_ip not in flow.request.host:
-        #         logger.error(f"User does not exist - dropping request")
-        #         flow.kill()
-        #         return
-        
-        # # Update server in cache
-        # cached_host = self.cache.hgetall(f"server:{host}")
-        # if cached_host:
-        #     logger.info(f"CACHE HIT: server [ {host} ]")
-        # else:
-        #     self.save(flow)
-        pass
-    def response(self, flow: http.HTTPFlow) -> None:
         host = flow.request.host
         logger.info(f"Request TO: {host}")
         if host == self.system_host:
             flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
+
+    def response(self, flow: http.HTTPFlow) -> None:
+        host = flow.request.host
         
         client_name = flow.client_conn.peername[0]
 
