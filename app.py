@@ -114,7 +114,7 @@ def start_session():
 
 
 def get_results(user_data:dict) -> dict:
-    columns = ['hostname','ip','city','region','country','longitude','latitude','org','postal','timezone','referer','count']
+    columns = ['hostname','ip','city','region','country','longitude','latitude','org','postal','timezone','referer','requests']
     servers = []
     for key in user_data:
         if key != "live" and key != "connected":
