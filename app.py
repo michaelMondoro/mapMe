@@ -74,9 +74,8 @@ def stop_session():
 
     data = get_results(user)
     print(data)
-    locations = np.array(data['locations'])
 
-    points = geopandas.points_from_xy(x=locations[:,0], y=locations[:,0])
+    points = geopandas.points_from_xy(x=data.longitude, y=data.longitude)
     gdf = geopandas.GeoDataFrame(data, geometry=points)
     
     cols = data.columns.tolist()
@@ -115,15 +114,17 @@ def start_session():
 
 
 def get_results(user_data:dict) -> dict:
-    columns = ['hostname','ip','city','region','country','location','org','postal','timezone','referer','count']
+    columns = ['hostname','ip','city','region','country','long','lat',
+               'location','org','postal','timezone','referer','count']
     servers = []
     for key in user_data:
         if key != "live" and key != "connected":
             server = cache.hgetall(f"server:{key}")
             request_count = user_data[key]
             server['count'] = request_count
+            long, lat = server['loc'].split(',')
             servers.append([server['hostname'], server['ip'], server['city'], server['region'],server['country'],
-                            server['loc'],server['org'], server['postal'],server['timezone'],server['referer'],request_count])
+                            long,lat,server['org'], server['postal'],server['timezone'],server['referer'],request_count])
     
     return pd.DataFrame(servers, columns=columns)
 
