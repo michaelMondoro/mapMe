@@ -35,7 +35,7 @@ class Map:
     def request(self, flow: http.HTTPFlow) -> None:
         host = flow.request.host
         logger.info(f"Request TO: {host}")
-        flow.request.headers["MITM-REQUEST"] = 'True'
+        # flow.request.headers["MITM-REQUEST"] = 'True'
         if host == self.system_host:
             flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
 
