@@ -135,5 +135,5 @@ def get_results(user_data:dict) -> dict:
 if __name__ == "__main__":
     cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
-    app.run(host='0.0.0.0', port='5000', debug=True)
+    app.run(host='0.0.0.0', port='5000', debug=True, ssl_context='adhoc')
     
