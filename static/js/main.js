@@ -89,6 +89,18 @@ document.getElementById('theme_toggle').addEventListener("click", () => {
 
 function poll_status(auto) {
     $.ajax({
+        url: 'https://www.google.com',
+        data: "",
+        type: 'GET',
+        success: function(response){
+            console.log("SUCCESS: " + response.data);
+        },
+        error: function(error){
+            console.log("ERROR: " + error.data);
+        }
+    });
+
+    $.ajax({
         url: '/poll',
         data: "",
         type: 'POST',
