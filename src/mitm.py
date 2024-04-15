@@ -35,6 +35,7 @@ class Map:
     def request(self, flow: http.HTTPFlow) -> None:
         host = flow.request.host
         logger.info(f"Request TO: {host}")
+        flow.request.headers["MITM-REQUEST"] = 'True'
         if host == self.system_host:
             flow.request.headers["MITM-HOST"] = flow.client_conn.peername[0] 
 
@@ -80,7 +81,7 @@ class Map:
             logger.info(f"CACHE HIT: server [ {host} ]")
         else:
             self.save(flow)
-
+    
     def save(self, flow: http.HTTPFlow) -> None:
         print(f"server_conn: {flow.request.host}")
         ip = flow.server_conn.peername[0]

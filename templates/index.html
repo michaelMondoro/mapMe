@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='pico.min.css') }}"/>
 
     <script defer src="{{ url_for('static',filename='js/map.js') }}" type="module"></script>
-    <script defer src="{{ url_for('static',filename='js/main.js') }}" type="module"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     
     <!-- Leaflet JS -->
@@ -34,9 +33,11 @@
         <hr>
         <section></section>
         {% if not rendered %}
+          <script defer src="{{ url_for('static',filename='js/main.js') }}" type="module"></script>
           {% include 'main.html' %}
         {% endif %}
         {% if rendered%}
+          <script defer src="{{ url_for('static',filename='js/dashboard.js') }}" type="module"></script>
           {% include 'dashboard.html' %}
         {% endif %}
     </div>

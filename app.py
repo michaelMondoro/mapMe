@@ -31,6 +31,7 @@ def check_mitm_header(request):
 
 @app.route("/")
 def home():
+    print(request.headers)
     return render_template('index.html', 
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
@@ -96,6 +97,7 @@ def stop_session():
         "rows": rows
     })
     return render_template('index.html', 
+                           geoData=response,
                            client=request.remote_addr, 
                            host=app.config['HOSTNAME'], 
                            rendered=True)
@@ -131,8 +133,7 @@ def get_results(user_data:dict) -> dict:
 
 
 if __name__ == "__main__":
-    # proxy = subprocess.Popen(["python3", "mitm.py", "/dev/null"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     cache = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
-    app.run(host='0.0.0.0', port='5000', debug=True)
+    app.run(host='0.0.0.0', port='5000', debug=True, ssl_context='adhoc')
     
